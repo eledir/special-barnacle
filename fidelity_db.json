@@ -1,0 +1,12 @@
+{
+    "sof": {
+        "customer_name": "sof",
+        "loyalty_card_type": "tiered",
+        "points": 1500
+    },
+    "ele": {
+        "customer_name": "ele",
+        "loyalty_card_type": "tiered",
+        "points": -1000
+    }
+}

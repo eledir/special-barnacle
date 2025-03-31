@@ -1,0 +1,100 @@
+import os
+
+def gestione_directory():
+    """Simula la gestione dei file in una cartella."""
+
+    percorso_cartella = input("Inserisci il percorso della cartella da esplorare: ")
+
+    if not os.path.isdir(percorso_cartella):
+        print(f"Errore: Il percorso '{percorso_cartella}' non è una directory valida.")
+        return
+
+    try:
+        file_nella_cartella = os.listdir(percorso_cartella)
+
+        if not file_nella_cartella:
+            print(f"La cartella '{percorso_cartella}' è vuota.")
+            return
+
+        print(f"\nFile presenti nella cartella '{percorso_cartella}':")
+        for nome_file in file_nella_cartella:
+            percorso_completo = os.path.join(percorso_cartella, nome_file)
+            if os.path.isfile(percorso_completo):
+                tipo = "File"
+            elif os.path.isdir(percorso_completo):
+                tipo = "Cartella"
+            else:
+                tipo = "Altro"
+            print(f"- {nome_file} ({tipo})")
+
+        azione = input("\nVuoi eseguire un'azione? (sì/no): ").lower()
+        if azione == 'sì':
+            print("\nAzioni disponibili:")
+            print("1. Apri un file")
+            print("2. Visualizza informazioni su un file/cartella")
+            print("3. Crea una nuova cartella")
+            print("4. Elimina un file/cartella (con cautela!)")
+            scelta = input("Scegli un'azione (numero): ")
+
+            if scelta == '1':
+                nome_file_aprire = input("Inserisci il nome del file da aprire: ")
+                percorso_file_aprire = os.path.join(percorso_cartella, nome_file_aprire)
+                if os.path.isfile(percorso_file_aprire):
+                    print(f"Simulazione apertura del file: '{percorso_file_aprire}'.")
+                    # In una vera applicazione, qui si aprirebbe il file con l'applicazione appropriata
+                else:
+                    print(f"Errore: Il file '{nome_file_aprire}' non esiste in questa cartella.")
+            elif scelta == '2':
+                nome_elemento = input("Inserisci il nome del file o della cartella di cui visualizzare le informazioni: ")
+                percorso_elemento = os.path.join(percorso_cartella, nome_elemento)
+                if os.path.exists(percorso_elemento):
+                    stat_info = os.stat(percorso_elemento)
+                    print(f"\nInformazioni su '{nome_elemento}':")
+                    print(f"  Dimensione: {stat_info.st_size} byte")
+                    print(f"  Ultima modifica: {stat_info.st_mtime}") # Timestamp Unix
+                    # Potresti formattare la data e l'ora in modo più leggibile
+                else:
+                    print(f"Errore: '{nome_elemento}' non esiste in questa cartella.")
+            elif scelta == '3':
+                nome_nuova_cartella = input("Inserisci il nome della nuova cartella da creare: ")
+                percorso_nuova_cartella = os.path.join(percorso_cartella, nome_nuova_cartella)
+                try:
+                    os.makedirs(percorso_nuova_cartella, exist_ok=True) # Crea anche le cartelle intermedie se non esistono
+                    print(f"Cartella '{nome_nuova_cartella}' creata con successo.")
+                except OSError as e:
+                    print(f"Errore durante la creazione della cartella: {e}")
+            elif scelta == '4':
+                nome_elemento_elimina = input("Inserisci il nome del file o della cartella da eliminare (FARE ATTENZIONE!): ")
+                percorso_elemento_elimina = os.path.join(percorso_cartella, nome_elemento_elimina)
+                if os.path.exists(percorso_elemento_elimina):
+                    conferma = input(f"Sei sicuro di voler eliminare '{nome_elemento_elimina}'? (sì/no): ").lower()
+                    if conferma == 'sì':
+                        try:
+                            if os.path.isfile(percorso_elemento_elimina):
+                                os.remove(percorso_elemento_elimina)
+                                print(f"File '{nome_elemento_elimina}' eliminato.")
+                            elif os.path.isdir(percorso_elemento_elimina):
+                                os.rmdir(percorso_elemento_elimina) # Funziona solo se la cartella è vuota
+                                print(f"Cartella '{nome_elemento_elimina}' eliminata (se era vuota).")
+                            else:
+                                print(f"Impossibile eliminare '{nome_elemento_elimina}'. Tipo di file non gestito.")
+                        except OSError as e:
+                            print(f"Errore durante l'eliminazione: {e}")
+                    else:
+                        print("Eliminazione annullata.")
+                else:
+                    print(f"Errore: '{nome_elemento_elimina}' non esiste in questa cartella.")
+            else:
+                print("Scelta non valida.")
+
+    except FileNotFoundError:
+        print(f"Errore: La cartella '{percorso_cartella}' non è stata trovata.")
+    except PermissionError:
+        print(f"Errore: Non hai i permessi necessari per accedere alla cartella '{percorso_cartella}'.")
+    except Exception as e:
+        print(f"Si è verificato un errore inaspettato: {e}")
+    finally:
+        print("\nGestione della directory completata.")
+
+if __name__ == "__main__":
+    gestione_directory() 
